@@ -1,4 +1,5 @@
 node_modules/
+.vercel/
 *.log
 *.tar.gz
 *.zip
