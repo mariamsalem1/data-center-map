@@ -1,0 +1,15 @@
+import http from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const args=process.argv.slice(2),rootFlag=args.indexOf('--root');
+const root=path.resolve(rootFlag>=0&&args[rootFlag+1]?args[rootFlag+1]:fileURLToPath(new URL('../dist/',import.meta.url)));
+const configured=Number(process.env.PORT||4173);
+const firstPort=Number.isInteger(configured)&&configured>=0&&configured<=65535?configured:4173;
+const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.geojson':'application/geo+json','.svg':'image/svg+xml','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'};
+await fs.access(path.join(root,'index.html')).catch(()=>{console.error('Dashboard index.html not found in: '+root);process.exit(1)});
+let attempts=0,candidate=firstPort;
+const server=http.createServer(async(req,res)=>{try{const requested=decodeURIComponent(new URL(req.url,'http://localhost').pathname);const target=path.resolve(root,'.'+requested+(requested.endsWith('/')?'index.html':''));if(!target.startsWith(root+path.sep)&&target!==path.join(root,'index.html')){res.writeHead(403);res.end('Forbidden');return}const content=await fs.readFile(target);res.writeHead(200,{'Content-Type':types[path.extname(target)]||'application/octet-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(content)}catch{res.writeHead(404);res.end('Not found')}});
+server.on('error',error=>{if((error.code==='EADDRINUSE'||error.code==='EACCES')&&candidate!==0){console.log('Port '+candidate+' is unavailable; choosing another port...');attempts++;candidate=attempts<20&&candidate<65535?candidate+1:0;server.listen(candidate,'127.0.0.1')}else{console.error('Could not start dashboard: '+error.message);process.exitCode=1}});
+server.on('listening',()=>{console.log('Dashboard ready: http://127.0.0.1:'+server.address().port+'/?update=v35');console.log('Serving project: '+root);console.log('Open the address above. Keep this window open; press Ctrl+C to stop.')});
+server.listen(firstPort,'127.0.0.1');

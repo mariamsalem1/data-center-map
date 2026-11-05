@@ -1,0 +1,60 @@
+/* Expand detail pages to the actual tab width, rather than a centered 1750px column. */
+.app{width:100%;min-width:0}
+.atlas-detail main{width:100%;max-width:none;margin:0;min-height:calc(100dvh - 75px);padding:26px 24px 0 51px;display:flex;flex-direction:column}
+.atlas-detail .page-heading{flex-shrink:0;width:100%;margin-bottom:20px}
+.atlas-detail #content{width:100%;max-width:none;min-width:0;flex:1;display:flex;flex-direction:column}
+.atlas-detail #content>*,.performance-rich,.cooling-page,.fire-visuals{width:100%;max-width:none;min-width:0}
+.atlas-detail footer{margin-top:auto;flex-shrink:0;padding-top:18px}
+.atlas-detail #content>.split-layout{flex:1;grid-template-columns:minmax(0,1fr) clamp(300px,23vw,420px);align-items:stretch}
+.atlas-detail #content>.bottom-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.atlas-detail #content>.work-grid{flex:1;align-items:stretch}
+.atlas-detail #content>.table-panel:last-child{flex:1}
+.atlas-detail .kpi-card{min-height:clamp(126px,12dvh,175px)}
+.atlas-detail .kpi-top{font-size:clamp(10px,.7vw,14px)}
+.atlas-detail .kpi-value{font-size:clamp(29px,2.1vw,42px)}
+.atlas-detail .panel-title{font-size:clamp(13px,.9vw,18px)}
+.atlas-detail .panel-subtitle{font-size:clamp(10px,.65vw,13px)}
+.atlas-detail .chart-body .chart-svg{height:clamp(180px,22dvh,310px)}
+.atlas-detail .cooling-hero{min-height:clamp(360px,45dvh,680px)}
+.atlas-detail .cooling-bottom{grid-template-columns:1.15fr .9fr 1.05fr}
+.atlas-detail .white-space-layout{grid-template-columns:minmax(0,1fr) clamp(300px,23vw,420px)}
+.atlas-detail .rack-crop{height:clamp(84px,7vw,150px)}
+.atlas-detail .white-space-conditions{height:100%}
+.atlas-detail .fire-response-layout{grid-template-columns:minmax(0,1fr) clamp(300px,23vw,420px)}
+.atlas-detail .performance-line-chart svg,.atlas-detail .performance-cost-chart{height:clamp(190px,23dvh,310px)}
+.atlas-detail .performance-source-donut{min-height:clamp(225px,27dvh,330px)}
+.atlas-detail .performance-gauges .campus-metric>svg{height:clamp(155px,18dvh,220px)}
+.atlas-detail .regional-dashboard{width:100%;max-width:none}
+@media(min-width:1700px){
+ .atlas-detail .detail-list p{font-size:12px;padding:15px 0}
+ .atlas-detail .twin-floor-grid{gap:16px}
+ .atlas-detail .twin-floor-asset>span{font-size:13px;padding:12px}
+ .atlas-detail .twin-floor-asset small{font-size:10px}
+ .atlas-detail .table-panel th{font-size:11px;padding-top:15px;padding-bottom:15px}
+ .atlas-detail .table-panel td{font-size:12px;padding-top:19px;padding-bottom:19px}
+ .atlas-detail .camera{height:clamp(210px,25dvh,330px)}
+}
+@media(max-width:1150px){
+ .atlas-detail main{padding:23px 18px 0 43px}
+ .atlas-detail #content>.split-layout{grid-template-columns:minmax(0,1fr) 290px}
+ .atlas-detail .white-space-layout{grid-template-columns:minmax(0,1fr) 280px}
+ .atlas-detail .fire-response-layout{grid-template-columns:minmax(0,1fr) 260px}
+ .atlas-detail .cooling-bottom{grid-template-columns:1fr 1fr}
+ .atlas-detail .cooling-bottom>.panel:last-child{grid-column:1/-1}
+ .atlas-detail .rack-crop{height:75px}
+}
+@media(max-width:950px){
+ .atlas-detail #content>.split-layout,.atlas-detail .white-space-layout{grid-template-columns:1fr}
+ .atlas-detail .white-space-conditions{height:auto}
+ .atlas-detail .rack-crop{height:90px}
+}
+@media(max-width:800px){.atlas-detail .fire-response-layout{grid-template-columns:1fr}}
+@media(max-width:650px){
+ .atlas-detail main{padding:22px 12px 0 38px}
+ .atlas-detail #content>.bottom-grid,.atlas-detail .cooling-bottom{grid-template-columns:1fr}
+ .atlas-detail .cooling-bottom>.panel:last-child{grid-column:auto}
+ .atlas-detail .cooling-hero{min-height:460px}
+ .atlas-detail .rack-crop{height:85px}
+ .atlas-detail .kpi-card{min-height:115px}
+ .atlas-detail .kpi-value{font-size:27px}
+}

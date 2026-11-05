@@ -1,0 +1,52 @@
+/* Fit the complete operations layout to the viewport without sideways scrolling. */
+html,body{max-width:100%;overflow-x:clip}
+.app,main,#content,.header-left,.header-actions,.page-heading>div{min-width:0;max-width:100%}
+.app>header{position:relative;gap:12px}
+.header-left{flex:1;padding-bottom:31px}
+#breadcrumbs{position:absolute;left:14px;right:14px;bottom:0;width:auto;max-width:calc(100% - 28px);height:31px;overflow:hidden}
+#breadcrumbs button,#breadcrumbs>.atlas-crumb{min-width:0;max-width:45%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1}
+.header-actions{flex-shrink:0}
+.page-heading{flex-wrap:wrap}
+.panel-title,.site-cell strong,.site-cell small,td,th,.rank-row,.detail-list p{overflow-wrap:anywhere}
+.site-cell,.site-cell>div,.atlas-bars,.atlas-card-content>div{min-width:0}
+.site-symbol{flex-shrink:0}
+.table-panel{max-width:100%;overflow:visible}
+table{width:100%;min-width:0;table-layout:fixed}
+th,td{padding:13px clamp(7px,1.1vw,21px)}
+.table-controls{min-width:0;max-width:100%;flex-wrap:wrap}
+.table-meter{flex-wrap:wrap;gap:5px}
+.atlas-card-heading h2{white-space:normal;overflow-wrap:anywhere}
+.atlas-region-card{min-width:0}
+.atlas-bar-label{flex-wrap:wrap;gap:3px}
+.filter-row,.panel-header,.panel-tools{flex-wrap:wrap}
+@media(max-width:900px){
+ .table-panel table{min-width:0}
+ .table-panel th,.table-panel td{font-size:9px;padding:10px 7px}
+ .site-cell{gap:5px;flex-wrap:wrap}
+ .table-link{white-space:normal;font-size:9px;padding:4px 0}
+ .table-meter .bar-track{max-width:100%;width:40px}
+}
+@media(max-width:650px){
+ .atlas-kpi-strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;gap:14px 0;scroll-snap-type:none}
+ .atlas-region-card{min-width:0;padding:0 10px}
+ .atlas-region-card:last-child{grid-column:1/-1}
+ .atlas-card-content{grid-template-columns:45px minmax(0,1fr);gap:8px}
+ .atlas-map-stage.egypt-map-stage{height:auto;min-height:calc(100dvh - 75px)}
+ .egypt-map-area{flex:none;height:60dvh;min-height:380px}
+ .header-actions{gap:5px}
+ .header-actions .live-pill,.header-actions .header-avatar,.header-actions .demo-pill{display:none}
+ .overview-map-button{font-size:9px;padding:6px 7px}
+ .header-kicker>span{display:none}
+ .detail-list p{gap:10px}
+ .detail-list strong{text-align:right}
+}
+@media(max-width:480px){
+ .table-panel th,.table-panel td{font-size:8px;padding:9px 3px}
+ .site-cell strong,.site-cell small{font-size:8px}
+ .site-symbol{display:none}
+ .table-meter .bar-track{display:none}
+ .table-panel .status{font-size:7px;padding:4px 2px}
+ .table-panel .status:before{display:none}
+ .schneider-header-logo{width:102px}
+ .atlas-detail main{padding-right:9px}
+}

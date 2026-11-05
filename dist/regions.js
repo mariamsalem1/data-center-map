@@ -1,0 +1,38 @@
+'use strict';
+let regionalMonth=10;
+const regionalMonths=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function regionalData(){
+ const selectedSites=state.site?sites.filter(s=>s.id===state.site):sites.filter(s=>state.region==='all'||s.region===state.region);
+ return [...new Set(selectedSites.map(s=>s.region))].map((name,regionIndex)=>{
+  const campuses=selectedSites.filter(s=>s.region===name),buildings=campuses.reduce((a,s)=>a+s.buildings,0);
+  const power=campuses.reduce((a,s)=>a+s.power,0),it=campuses.reduce((a,s)=>a+s.power/s.pue,0);
+  const capacity=buildings*80,occupied=campuses.reduce((a,s)=>a+Math.round(s.buildings*80*s.racks/100),0);
+  const counts=[0,0,0];
+  campuses.forEach(s=>{for(let b=0;b<s.buildings;b++){const pue=Math.max(1.12,s.pue-b*.025);counts[pue<=1.32?0:pue<=1.45?1:2]++}});
+  const seasonal=1+Math.sin((regionalMonth-3)*Math.PI/6)*.09;
+  const wue=campuses.reduce((a,s)=>a+(0.36+sites.indexOf(s)*.025)*s.power/s.pue,0)/it;
+  // Explicit demonstration assumptions, not real bills or tariffs.
+  const hours=24*new Date(2026,regionalMonth+1,0).getDate();
+  const electricity=power*1000*hours*4.5*seasonal;
+  const water=it*1000*hours*wue/1000*30*seasonal;
+  const gas=buildings*2200*(1+regionIndex*.09)*seasonal;
+  return {name:state.site?campuses[0].name:name,campuses,buildings,power,it,pue:power/it,wue,capacity,occupied,counts,customers:campuses.reduce((a,s)=>a+s.customers,0),status:campuses.some(s=>s.status==='critical')?'critical':campuses.some(s=>s.status==='warning')?'warning':'operational',costs:[water,electricity,gas],regionIndex};
+ });
+}
+function regionalEfficiency(r){
+ const colors=['#6f98ff','#5ce0bc','#ff8992'];let offset=0;
+ return `<div class="region-efficiency"><svg viewBox="0 0 110 110" role="img" aria-label="${esc(r.name)} efficiency: ${r.counts[0]} high, ${r.counts[1]} medium, ${r.counts[2]} low"><circle cx="55" cy="55" r="38" fill="none" stroke="#334452" stroke-width="17"/>${r.counts.map((n,i)=>{const length=n/r.buildings*238.761;const svg=`<circle cx="55" cy="55" r="38" fill="none" stroke="${colors[i]}" stroke-width="17" stroke-dasharray="${length} 238.761" stroke-dashoffset="${-offset}" transform="rotate(-90 55 55)"/>`;offset+=length;return svg}).join('')}<text x="55" y="53" text-anchor="middle" fill="#f0f7fc" font-size="19">${r.buildings}</text><text x="55" y="68" text-anchor="middle" fill="#9eb2c4" font-size="8">buildings</text></svg><div>${['High efficiency','Medium efficiency','Low efficiency'].map((label,i)=>`<p><i style="background:${colors[i]}"></i><span>${label}</span><strong>${Math.round(r.counts[i]/r.buildings*100)}<small>%</small></strong></p>`).join('')}</div></div>`;
+}
+function regionalBars(r){
+ return `<svg class="regional-monthly-chart" viewBox="0 0 340 112" role="img" aria-label="${esc(r.name)} illustrative monthly best and average PUE, January to December"><line x1="21" y1="85" x2="335" y2="85" stroke="#526371" stroke-width=".7"/>${[1,1.5,2].map(v=>`<text x="0" y="${86-(v-1)*63}" fill="#8da4b7" font-size="7">${v.toFixed(1)}</text>`).join('')}${regionalMonths.map((m,i)=>{const avg=Math.max(1.12,r.pue+Math.sin((i-3)*Math.PI/6)*.09),best=Math.min(avg,Math.min(...r.campuses.map(s=>s.pue))-.025+Math.sin((i-3)*Math.PI/6)*.04),x=25+i*25.7;return `${i===regionalMonth?`<rect x="${x-2}" y="10" width="23" height="92" fill="#7699b31a" rx="2"/>`:''}<rect x="${x}" y="${85-(best-1)*63}" width="7" height="${(best-1)*63}" rx="1" fill="#709cff"/><rect x="${x+9}" y="${85-(avg-1)*63}" width="7" height="${(avg-1)*63}" rx="1" fill="#62d9bf"/><text x="${x+8}" y="103" text-anchor="middle" fill="#afc0ce" font-size="7">${m}</text>`}).join('')}</svg>`;
+}
+function regionalRackGauge(r){
+ const used=r.occupied/r.capacity;
+ return `<div class="regional-rack"><svg viewBox="0 0 135 112" role="img" aria-label="${r.occupied} of ${r.capacity} rack positions occupied, ${(used*100).toFixed(1)} percent"><path d="M24 91A49 49 0 1 1 111 91" fill="none" stroke="#344453" stroke-width="6" stroke-linecap="round"/><path d="M24 91A49 49 0 1 1 111 91" pathLength="100" fill="none" stroke="#a394f5" stroke-width="6" stroke-dasharray="${used*100} 100" stroke-linecap="round"/><path d="M33 84A39 39 0 1 1 102 84" fill="none" stroke="#5ce0bc" stroke-width="3" stroke-opacity=".7"/><text x="67.5" y="58" text-anchor="middle" fill="#fff" font-size="24">${(used*100).toFixed(0)}<tspan font-size="11">%</tspan></text><text x="67.5" y="76" text-anchor="middle" fill="#b1c4d4" font-size="10">${r.occupied} / ${r.capacity}</text><text x="67.5" y="108" text-anchor="middle" fill="#8ea6bc" font-size="8">OCCUPIED / TOTAL POSITIONS</text></svg></div>`;
+}
+function regionalCost(value){return value>=1000000?(value/1000000).toFixed(2)+'M':(value/1000).toFixed(1)+'K'}
+function regionalPerformance(){
+ const rows=regionalData();
+ return `<section class="regional-dashboard" aria-label="Egypt regional data center performance"><div class="regional-toolbar"><div><span class="chip">${rows.length} regions</span><span class="chip">${rows.reduce((a,r)=>a+r.campuses.length,0)} campuses</span><span class="chip">${rows.reduce((a,r)=>a+r.buildings,0)} buildings</span></div><label>Reporting month <select id="regional-month" aria-label="Regional reporting month">${regionalMonths.map((m,i)=>`<option value="${i}" ${i===regionalMonth?'selected':''}>${m} 2026</option>`).join('')}</select></label><span class="regional-demo">DEMONSTRATION DATA · EGP</span></div><div class="regional-column-headings" aria-hidden="true"><span>${state.building?'Selected building':state.site?'Selected campus':'Egypt region / portfolio'}</span><span>Data center efficiency</span><span>Monthly PUE performance</span><span>Total rack utilization</span><span>Estimated utility cost / month</span></div>${rows.map(r=>`<article class="regional-row" aria-label="${esc(r.name)} region"><div class="regional-summary"><h2><i class="region-health ${r.status}" title="${r.status}"></i>${esc(r.name)}</h2><p class="regional-campus-names">${r.campuses.map(s=>esc(s.name.replace(' Campus',''))).join(' · ')}</p><div class="regional-numbers">${[[r.buildings,'Data center buildings'],[r.customers,'Customers'],[r.pue.toFixed(2),'Average PUE'],[r.wue.toFixed(2),'WUE · L/kWh']].map(([v,l])=>`<div><strong>${v}</strong><span>${l}</span></div>`).join('')}</div></div><div class="regional-cell"><h3>Data center efficiency</h3>${regionalEfficiency(r)}</div><div class="regional-cell regional-performance-cell"><h3>Monthly PUE performance</h3><div class="regional-chart-key"><span><i></i>Best PUE</span><span><i></i>Average PUE</span></div>${regionalBars(r)}</div><div class="regional-cell"><h3>Total rack utilization</h3>${regionalRackGauge(r)}</div><div class="regional-cell regional-utility-cell"><h3>Estimated utility cost</h3><div class="regional-utilities">${r.costs.map((v,i)=>`<div><strong><small>EGP</small> ${regionalCost(v)}</strong><span>${['Water','Electricity','Natural gas'][i]}</span><em>${regionalMonths[regionalMonth]} 2026 estimate</em></div>`).join('')}</div></div></article>`).join('')}<div class="regional-method"><strong>Simulation assumptions:</strong> regions reflect the seven campuses configured in this project, not a verified census of Egypt’s data centers. PUE = facility power / IT power; WUE and monthly trends are illustrative. Rack capacity assumes 80 positions per building. Cost estimates use demo rates of 4.50 EGP/kWh, 30 EGP/m³, and a synthetic gas allowance; these are not actual tariffs or invoices. Efficiency bands: high PUE ≤ 1.32, medium ≤ 1.45, low > 1.45. Use the left navigation to drill into a campus.</div></section>`;
+}
+document.addEventListener('change',e=>{if(e.target.id==='regional-month'){regionalMonth=Number(e.target.value);render()}});

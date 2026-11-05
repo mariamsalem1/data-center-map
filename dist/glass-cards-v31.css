@@ -1,0 +1,16 @@
+/* Shared smoked-glass cards. Backdrop blur affects only what is behind a card. */
+:root{--card-glass:linear-gradient(135deg,rgba(37,55,70,.68),rgba(15,29,43,.76));--card-glass-border:rgba(186,210,228,.22);--card-glass-shadow:0 8px 24px rgba(0,0,0,.2),inset 0 1px 0 rgba(226,239,248,.045)}
+.app :is(.kpi-card,.panel,.regional-dashboard,.performance-gauges,.white-space-panel,.white-space-conditions,.equipment-card,.twin-equipment-card,.twin-floor-asset,.fire-photo-card,.completion-camera,.completion-access-grid button,.camera,.rack-tile,.rack-inspector,.fire-equipment-figure,.work-column,.work-card,.atlas-region-card,.campus-dashboard>article){background:var(--card-glass);border:1px solid var(--card-glass-border);box-shadow:var(--card-glass-shadow);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+/* Inner plotting and table surfaces share the parent glass instead of masking it. */
+.app :is(.chart-body,.performance-line-chart,.cooling-trend,.performance-source-donut,.performance-headroom,table,thead,tbody){background:transparent}
+.app :is(.regional-toolbar,.regional-column-headings,.regional-method,.table-panel th){background:rgba(12,25,38,.44)}
+.app .regional-row,.app .regional-row:nth-child(odd){background:rgba(36,54,69,.27)}
+.app .regional-row:nth-child(even){background:rgba(15,29,43,.27)}
+.app .table-panel tbody tr:hover{background:rgba(120,167,178,.11)}
+.app .atlas-kpi-strip{background:rgba(11,22,33,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.app .atlas-region-card{border-radius:7px;padding:16px;min-width:0}
+.app :is(.equipment-card,.twin-equipment-card,.twin-floor-asset,.fire-photo-card,.completion-camera,.completion-access-grid button,.work-card):hover{border-color:rgba(169,203,208,.4)}
+/* Preserve severity and selection cues, with all photo and chart content sharp. */
+.app .rack-tile.critical{border-color:#d87782}.app .rack-tile.warning{border-color:#d1ae70}.app .rack-tile.selected{border-color:#8cb8ad;box-shadow:0 0 0 1px #8cb8ad44}
+.app :is(.cooling-advisory,.performance-alarm,.fire-detector-advisory){background:rgba(54,42,27,.83);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--card-glass:rgba(23,39,53,.95)}}
