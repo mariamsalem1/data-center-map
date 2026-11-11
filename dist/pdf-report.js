@@ -10,7 +10,7 @@ function portfolioPDF(snapshot){
  const pages=[];let commands=[];
  const text=(x,y,value,size=10)=>commands.push(`0.13 0.20 0.27 rg BT /F1 ${size} Tf ${x} ${842-y} Td (${ascii(value)}) Tj ET`);
  const rect=(x,y,w,h,color)=>commands.push(`${color} rg ${x} ${842-y-h} ${w} ${h} re f`);
- const heading=title=>{commands=[];rect(0,0,595,9,'0.18 0.44 0.43');text(36,43,'Unified Operations | '+title,19);text(36,66,snapshot.scope,10);text(36,83,'Generated '+snapshot.date+' (Cairo) | SIMULATED DATA',9)};
+ const heading=title=>{commands=[];rect(0,0,595,9,'0.18 0.44 0.43');text(36,43,'Unified Operations Center | '+title,19);text(36,66,snapshot.scope,10);text(36,83,'Generated '+snapshot.date+' (Cairo) | SIMULATED DATA',9)};
  const finish=()=>{text(36,809,'Demonstration telemetry. For operational review; not verified facility measurements.',8);text(527,809,String(pages.length+1),9);pages.push(commands.join('\n'))};
  const chart=(title,key,unit,y,color)=>{text(36,y,title,13);const max=Math.max(1,...snapshot.rows.map(r=>r[key]));snapshot.rows.forEach((r,i)=>{const yy=y+20+i*20;text(36,yy+10,r.name.replace(' Campus','').slice(0,29),8);rect(211,yy,270,13,'0.91 0.94 0.95');rect(211,yy,270*r[key]/max,13,color);text(490,yy+10,r[key].toFixed(key==='racks'?0:2)+' '+unit,8)})};
  heading('Portfolio performance report');

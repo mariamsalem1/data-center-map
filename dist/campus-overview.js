@@ -23,7 +23,7 @@ function selectMapCampus(id){
  state.page='overview';state.site=s.id;state.region=s.region;state.building=null;state.tab='home';
  const strip=$('.atlas-kpi-strip');
  if(strip){strip.innerHTML=campusDashboard(s);strip.classList.add('campus-selected-strip')}
- $('#breadcrumbs').innerHTML=`<span class="atlas-crumb">Egypt operations</span><span class="atlas-crumb">${esc(s.region)}</span><span class="atlas-crumb">${esc(s.name)}</span>`;
+ $('#breadcrumbs').innerHTML=`<span class="atlas-crumb">Unified Operations Center</span><span class="atlas-crumb">${esc(s.region)}</span><span class="atlas-crumb">${esc(s.name)}</span>`;
  const title=$('.egypt-map-title small');if(title)title.textContent=s.name+' · '+s.region;
  buildAtlasNavigation();
  for(const [markerId,marker] of campusMapMarkers){marker.setStyle({color:markerId===s.id?'#44e3c1':'#fff',weight:markerId===s.id?4:2.5});if(markerId===s.id)marker.bringToFront()}

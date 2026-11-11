@@ -1,5 +1,5 @@
 'use strict';
-const navigationSystemLabels={home:'Building overview',halls:'Data halls',bms:'Building services (BMS/FMS)',mechanical:'Cooling & mechanical',electrical:'Power & electrical',fire:'Fire systems',security:'Security & CCTV'};
+const navigationSystemLabels={home:'Building overview',halls:'Data halls',bms:'Building services (BMS/FMS)',mechanical:'Cooling & mechanical',electrical:'Power & electrical',fire:'Fire systems',security:'Physical security'};
 function navigationContext(){
  const site=sites.find(s=>s.id===state.site),building=site&&state.building;
  const local=state.page==='building'||state.page==='regions'&&building;
